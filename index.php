@@ -26,3 +26,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
   </main>
 </body>
 </html>
+
+<!-- warning: source control history might look a little weird, that's because i split my development between my laptop and phone (laptop for offline, phone for online) because my laptop's connection is a little wonky at home -->
