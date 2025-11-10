@@ -20,3 +20,4 @@ $formats = formats_all();
   <input type="hidden" name="action" value="create">
   <button type="submit">Save Record</button>
 </form>
+<a href="?view=list">Back to List</a>
