@@ -38,4 +38,33 @@ function record_create($title, $artist, $price, $format_id) {
     ]);
     return true;
 }
+
+function record_find($id) {
+    $pdo = get_pdo();
+    $stmt = $pdo->prepare('SELECT * FROM records WHERE id= :id');
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+function record_update($id, $title, $artist, $price, $format_id) {
+    $pdo = get_pdo();
+    $stmt = $pdo->prepare('
+        UPDATE records
+        SET title = :title, artist = :artist, price = :price, format_id = :format_id
+        WHERE id = :id
+    ');
+    return $stmt->execute([
+        ':title' => trim($title),
+        ':artist' => trim($artist),
+        ':price' => $price,
+        ':format_id' => $format_id,
+        ':id' => $id
+    ]);
+}
+
+function record_delete($id) {
+    $pdo = get_pdo();
+    $stmt = $pdo->prepare('DELETE FROM records WHERE id = :id');
+    return $stmt->execute(['id' => $id]);
+}
 ?>
