@@ -26,7 +26,6 @@ if (!$action && !in_array($view, $public_views, true)) {
   require_login();
 }
 
-$view = $_GET['view'] ?? 'list';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $action = $_POST['action'] ?? '';
@@ -110,14 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     case 'add_to_cart':
       require_login();
       $record_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-
       if ($record_id) {
-        if (!isset($_SESSION['cart'])) {
-          $_SESSION['cart'] = [];
-        }
         $_SESSION['cart'][] = $record_id;
       }
-      $view = 'list';
+      $view = 'cart';
       break;
 
     case 'checkout':
