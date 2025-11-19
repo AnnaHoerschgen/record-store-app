@@ -7,6 +7,7 @@ session_start();
 $view   = filter_input(INPUT_GET, 'view') ?: 'list';
 $action = filter_input(INPUT_POST, 'action');
 
+// requires the user to be logged in. this function runs whenever an action or view is restricted - sending them to the login page. it checks if $SESSION_['user_id'] is empty and redirects the user to the login page if the user is not logged in.
 function require_login(): void
 {
   if (empty($_SESSION['user_id'])) {
@@ -53,6 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $view = $ok ? 'list' : 'edit';
       break;
 
+    // login block - handles user login. checks submitted username and password, verifies password, and sets session variables:
+    //  - $_SESSION['user_id']
+    //  - $_SESSION['full_name']
     case 'login':
       $username = trim((string)($_POST['username'] ?? ''));
       $password = (string)($_POST['password'] ?? '');
@@ -80,6 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $view = 'login';
       break;
 
+    // register block - handles user registration. creates a new user if username and password matches confirmation. after successful registration, sets session variables:
+    //  - $_SESSION['user_id']
+    //  - $_SESSION['full_name']
     case 'register':
       $username  = trim((string)($_POST['username'] ?? ''));
       $full_name = trim((string)($_POST['full_name'] ?? ''));
@@ -106,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       break;
 
+    // add to cart - stores record ids in $_SESSION['cart']. each time a record is added, its id is appended to the cart array.
     case 'add_to_cart':
       require_login();
       $record_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -137,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   record_delete($_GET['id']);
   $view = 'deleted';
 }
+// prepare cart records for the cart view
 if ($view === 'cart') {
   $cart_ids = $_SESSION['cart'] ?? [];
   $records_in_cart = records_by_ids($cart_ids);

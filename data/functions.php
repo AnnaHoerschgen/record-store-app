@@ -1,5 +1,6 @@
 <?php
-function get_pdo() {
+function get_pdo()
+{
     static $pdo;
     if (!$pdo) {
         $pdo = require __DIR__ . '/db.php';
@@ -7,13 +8,49 @@ function get_pdo() {
     return $pdo;
 }
 
-function formats_all() {
+/* --------------------- USER FUNCTIONS --------------------- */
+
+/**
+ * Create a new user.
+ * @param string $username - desired username
+ * @param string $full_name - user's full name
+ * @param string $hash - hashed password
+ * @return void
+ */
+function user_create(string $username, string $full_name, string $hash): void
+{
+    $pdo = get_pdo();
+    $sql = "INSERT INTO users (username, full_name, password_hash)
+            VALUES (:u, :f, :p)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':u' => $username, ':f' => $full_name, ':p' => $hash]);
+}
+
+/**
+ * Find a user by username.
+ * @param string $username
+ * @return array|null - returns user array or null if not found
+ */
+function user_find_by_username(string $username): ?array
+{
+    $pdo = get_pdo();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :u");
+    $stmt->execute([':u' => $username]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ?: null;
+}
+
+/* --------------------- RECORD FUNCTIONS --------------------- */
+
+function formats_all()
+{
     $pdo = get_pdo();
     $stmt = $pdo->query('SELECT id, name FROM formats ORDER BY name');
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function records_all() {
+function records_all()
+{
     $pdo = get_pdo();
     $sql = 'SELECT r.id, r.title, r.artist, r.price, f.name AS format_name, g.name AS genre_name
             FROM records r
@@ -24,7 +61,8 @@ function records_all() {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function record_create($title, $artist, $price, $format_id) {
+function record_create($title, $artist, $price, $format_id)
+{
     if (!$title || !$artist || !$price || !$format_id) {
         return false;
     }
@@ -39,14 +77,16 @@ function record_create($title, $artist, $price, $format_id) {
     return true;
 }
 
-function record_find($id) {
+function record_find($id)
+{
     $pdo = get_pdo();
     $stmt = $pdo->prepare('SELECT * FROM records WHERE id= :id');
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-function record_update($id, $title, $artist, $price, $format_id) {
+function record_update($id, $title, $artist, $price, $format_id)
+{
     $pdo = get_pdo();
     $stmt = $pdo->prepare('
         UPDATE records
@@ -62,29 +102,22 @@ function record_update($id, $title, $artist, $price, $format_id) {
     ]);
 }
 
-function record_delete($id) {
+function record_delete($id)
+{
     $pdo = get_pdo();
     $stmt = $pdo->prepare('DELETE FROM records WHERE id = :id');
     return $stmt->execute(['id' => $id]);
 }
 
-function user_create(string $username, string $full_name, string $hash): void {
-    $pdo = get_pdo();
-    $sql = "INSERT INTO users (username, full_name, password_hash)
-            VALUES (:u, :f, :p)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':u'=>$username, ':f'=>$full_name, ':p'=>$hash]);
-}
+/* --------------------- CART / PURCHASE FUNCTIONS --------------------- */
 
-function user_find_by_username(string $username): ?array {
-    $pdo = get_pdo();
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :u");
-    $stmt->execute([':u'=>$username]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $row ?: null;
-}
-
-function records_by_ids(array $ids): array {
+/**
+ * Retrieve records by an array of IDs.
+ * @param array $ids - list of record IDs
+ * @return array - array of record data
+ */
+function records_by_ids(array $ids): array
+{
     if (empty($ids)) return [];
     $pdo = get_pdo();
     $ph = implode(',', array_fill(0, count($ids), '?'));
@@ -97,11 +130,18 @@ function records_by_ids(array $ids): array {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function purchase_create(int $user_id, int $record_id): void {
+/**
+ * Create a purchase record for a user and a record.
+ * @param int $user_id
+ * @param int $record_id
+ * @return void
+ */
+function purchase_create(int $user_id, int $record_id): void
+{
     $pdo = get_pdo();
     $sql = "INSERT INTO purchases (user_id, record_id, purchase_date)
             VALUES (:u, :r, NOW())";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([':u'=>$user_id, ':r'=>$record_id]);
+    $stmt->execute([':u' => $user_id, ':r' => $record_id]);
 }
 ?>
