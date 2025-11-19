@@ -10,6 +10,7 @@ nav a {
     color: #0077cc;
 }
 
+/* TABLES */
 table {
     border-collapse: collapse;
     width: 100%;
@@ -17,13 +18,35 @@ table {
     background: white;
 }
 
-th,
+/* Center all table headers */
+th {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+    background: #f2f2f2;
+}
+
+/* Default cell style */
 td {
     border: 1px solid #ccc;
     padding: 8px;
     text-align: left;
 }
 
+/* Center ONLY the Operations column */
+td.operations-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Inline forms inside tables */
+td.operations-cell form {
+    display: inline-block;
+    width: auto;
+    margin: 0 3px;
+}
+
+/* FORMS */
 form {
     background: white;
     padding: 20px;
@@ -39,6 +62,14 @@ button {
     margin: 6px 0;
 }
 
+/* Record list buttons (inside table rows) */
+table form button {
+    width: auto;            /* shrink instead of filling entire form width */
+    padding: 6px 10px;
+    margin: 0;
+}
+
+/* SUCCESS BOX */
 .success {
     background: #e0ffe0;
     padding: 10px;

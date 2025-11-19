@@ -19,7 +19,7 @@ $records = records_all();
       <td>$<?= htmlspecialchars($r['price']) ?></td>
       <td><?= strtoupper(htmlspecialchars($r['format_name'])) ?></td>
       <td><?= htmlspecialchars($r['genre_name']) ?></td>
-      <td>
+      <td class="operations-cell">
         <form method="post" class="d-inline">
           <input type="hidden" name="id" value="<?= $r['id'] ?>">
           <input type="hidden" name="action" value="add_to_cart">
